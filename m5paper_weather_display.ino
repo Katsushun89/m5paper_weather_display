@@ -41,8 +41,11 @@ void setup(void)
 {
   setupWeatherIcon();
 
-  M5.begin();
+  //M5.begin();
+  M5.begin(true, true, true, true, false, false);//custmized
+
   M5.SHT30.Begin();
+  M5.RTC.begin();
 
   gfx.init();
   gfx.setRotation(1);
@@ -135,8 +138,11 @@ void drawTempAndHumid(void)
 
 void loop(void)
 {
-  if( M5.BtnL.wasPressed()) decWeather();
-  //if( M5.BtnP.wasPressed()) reset();
-  if( M5.BtnR.wasPressed()) incWeather();
+  if(M5.BtnL.wasPressed()) decWeather();
+  if(M5.BtnR.wasPressed()) incWeather();
+  if(M5.BtnP.wasPressed()){
+    M5.shutdown(5);
+  }
+
   M5.update();
 }
