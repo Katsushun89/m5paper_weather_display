@@ -2,21 +2,18 @@
 #include <M5EPD.h>
 #include <LovyanGFX.hpp>
 #include <map>
+#include "src/weather_forecast.hpp"
 
 LGFX gfx;
 LGFX_Sprite temp_sp(&gfx);
 LGFX_Sprite humi_sp(&gfx);
 
+WeatherForecast weather_forecast;
+
 int w;
 int h;
 
 //weather
-enum {
-  CLOUDY = 0,
-  SUNNY,
-  RAINY,
-  SNOW,
-};
 int now_weather = 0;
 std::map<int, String> weather_icon_file_map;
 
@@ -25,7 +22,8 @@ void setupWeatherIcon(void)
   weather_icon_file_map[CLOUDY] = "/cloudy.jpeg";
   weather_icon_file_map[SUNNY] = "/sunny.jpeg";
   weather_icon_file_map[RAINY] = "/rainly.jpeg";
-  weather_icon_file_map[SNOW] = "/snow.jpeg";
+  weather_icon_file_map[SUNNY_AND_CLOUDY] = "/sunnyandcloudy.jpeg";
+  weather_icon_file_map[RAINY_AND_CLOUDY] = "/rainyandcloudy.jpeg";
 }
 
 void drawDate(const char c[])
@@ -77,6 +75,10 @@ void setup(void)
   drawThermometerIcon();
   drawHumidityIcon();
   drawTempAndHumid();
+
+  if(weather_forecast.downloadWeatherForecast()){
+
+  }
 }
 
 void updateWeatherIcon(void)
