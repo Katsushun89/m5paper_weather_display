@@ -1,9 +1,11 @@
 #pragma once
 
+#include <string>
 #include <ArduinoJson.h>
 
 enum {
-  CLOUDY = 0,
+  WEATHER_NOT_SET = 0,
+  CLOUDY,
   SUNNY,
   RAINY,
   SNOW,
@@ -25,7 +27,7 @@ private:
     String rain_fall_chance_12_18;
     String rain_fall_chance_18_24;
 
-    bool setupWifi(void);
+    bool setupWiFi(void);
     String createJson(String json_string);
     bool getWeatherForecast(DynamicJsonDocument &doc);
 
@@ -35,6 +37,7 @@ public:
     bool downloadWeatherForecast(void);
     bool isDownloadedWeatherForecast(void){ return is_downloaded_weather; };
     String getWeather(void){ return weather; };
+    int getWeatherEnum(void);
     String getMaxTemperature(void){ return max_temperature; };
     String getMinTemperature(void){ return min_temperature; };
     String getRainFallChance00_06(void){ return rain_fall_chance_00_06; };

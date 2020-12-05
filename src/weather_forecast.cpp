@@ -9,7 +9,7 @@ WeatherForecast::WeatherForecast(void)
     this->region = "東部";
 }
 
-bool WeatherForecast::setupWifi(void)
+bool WeatherForecast::setupWiFi(void)
 {
     WiFi.begin(SSID, PASS);
 
@@ -21,11 +21,11 @@ bool WeatherForecast::setupWifi(void)
 
     // Check if connected to wifi
     if(WiFi.status() != WL_CONNECTED) {
-        Serial.println("No Wifi!");
+        Serial.println("No WiFi!");
         return false;
     }
 
-    Serial.println("Connected to Wifi, Connecting to server.");
+    Serial.println("Connected to WiFi, Connecting to server.");
     return true;
 }
 
@@ -58,8 +58,9 @@ bool WeatherForecast::getWeatherForecast(DynamicJsonDocument &doc)
 bool WeatherForecast::downloadWeatherForecast(void)
 {
     Serial.println("downloadWeatherForecast");//debug
-    if(!setupWifi()){
+    if(!setupWiFi()){
         this->is_downloaded_weather = false;
+        WiFi.disconnect();
         return false;
     }
 
@@ -67,6 +68,7 @@ bool WeatherForecast::downloadWeatherForecast(void)
 
     if(!getWeatherForecast(weather_info)){
         this->is_downloaded_weather = false;
+        WiFi.disconnect();
         return false;
     }
 
@@ -96,5 +98,31 @@ bool WeatherForecast::downloadWeatherForecast(void)
     String rain_3 = today_weather_info["rainfallchance"]["period"][3]["content"];
     this->rain_fall_chance_18_24 = rain_3;
 
+    this->is_downloaded_weather = true;
+
+    WiFi.disconnect();
     return true;
+}
+
+int WeatherForecast::getWeatherEnum(void)
+{
+    String w = getWeather();
+    if(weather.indexOf("雨") != -1){
+        if(weather.indexOf("くもり") != -1){
+            return RAINY_AND_CLOUDY;
+        }else{
+            return RAINY;
+        }
+    }else if(weather.indexOf("晴") != -1){
+        if(weather.indexOf("くもり") != -1){
+            return SUNNY_AND_CLOUDY;
+        }else{
+            return SUNNY;
+        }
+    }else if(weather.indexOf("雪") != -1){
+        return SNOW;
+    }else if(weather.indexOf("くもり") != -1){
+        return CLOUDY;
+    }
+    return WEATHER_NOT_SET;
 }
