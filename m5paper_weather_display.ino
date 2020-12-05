@@ -61,7 +61,7 @@ void setup(void)
   gfx.setTextColor(TFT_BLACK, TFT_WHITE);
   gfx.setTextSize(0.85);
 
-  drawDate("12.01 12:34");
+  drawDate("12.05 12:34");
 
   temp_sp.setColorDepth(4);
   temp_sp.createSprite(120, 80);
@@ -72,7 +72,7 @@ void setup(void)
   humi_sp.setFont(&fonts::Font8);
 
   rain_sp.setColorDepth(4);
-  rain_sp.createSprite(530, 180);
+  rain_sp.createSprite(530, 150);
   rain_sp.setFont(&fonts::lgfxJapanGothic_40);
 
   delay(1000);
