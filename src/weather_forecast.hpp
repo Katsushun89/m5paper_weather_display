@@ -27,7 +27,6 @@ private:
     String rain_fall_chance_12_18;
     String rain_fall_chance_18_24;
 
-    bool setupWiFi(void);
     String createJson(String json_string);
     bool getWeatherForecast(DynamicJsonDocument &doc);
 

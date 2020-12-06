@@ -1,32 +1,11 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include "../config.h"
 #include "weather_forecast.hpp"
 
 WeatherForecast::WeatherForecast(void)
 {
     this->endpoint = "https://www.drk7.jp/weather/json/14.js";
     this->region = "東部";
-}
-
-bool WeatherForecast::setupWiFi(void)
-{
-    WiFi.begin(SSID, PASS);
-
-    // Wait some time to connect to wifi
-    for(int i = 0; i < 10 && WiFi.status() != WL_CONNECTED; i++) {
-        Serial.print(".");
-        delay(1000);
-    }
-
-    // Check if connected to wifi
-    if(WiFi.status() != WL_CONNECTED) {
-        Serial.println("No WiFi!");
-        return false;
-    }
-
-    Serial.println("Connected to WiFi, Connecting to server.");
-    return true;
 }
 
 String WeatherForecast::createJson(String json_string)
@@ -58,9 +37,8 @@ bool WeatherForecast::getWeatherForecast(DynamicJsonDocument &doc)
 bool WeatherForecast::downloadWeatherForecast(void)
 {
     Serial.println("downloadWeatherForecast");//debug
-    if(!setupWiFi()){
+    if(!WiFi.isConnected()){
         this->is_downloaded_weather = false;
-        WiFi.disconnect();
         return false;
     }
 
@@ -68,7 +46,6 @@ bool WeatherForecast::downloadWeatherForecast(void)
 
     if(!getWeatherForecast(weather_info)){
         this->is_downloaded_weather = false;
-        WiFi.disconnect();
         return false;
     }
 
@@ -100,7 +77,6 @@ bool WeatherForecast::downloadWeatherForecast(void)
 
     this->is_downloaded_weather = true;
 
-    WiFi.disconnect();
     return true;
 }
 
