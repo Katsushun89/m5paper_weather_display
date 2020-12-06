@@ -1,4 +1,3 @@
-#include <M5EPD.h>
 #include <WiFi.h>
 #include "time_manager.hpp"
 
@@ -54,4 +53,47 @@ String TimeManager::getDate(void)
     String date(c_date);
     Serial.printf("%s\n", date.c_str());
     return date;
+}
+
+void TimeManager::setWakeupTime(int8_t hour, int8_t min)
+{
+    if(hour >= 0 && hour < 24){
+        wakeup_hour = hour;
+    }else{
+        Serial.printf("wakeup set hour out of range %d\n", hour);
+    }
+
+    if(min >= 0 && min < 60){
+        wakeup_min = min;
+    }else{
+        Serial.printf("wakeup set min out of range %d\n", min);
+    }
+
+    if(min >= 0 && min < 60){
+        wakeup_min = min;
+    }
+}
+
+int8_t TimeManager::getHour(void)
+{
+    rtc_time_t rtc_time;
+    M5.RTC.getTime(&rtc_time);
+
+    return rtc_time.hour;
+}
+
+int8_t TimeManager::getMin(void)
+{
+    rtc_time_t rtc_time;
+    M5.RTC.getTime(&rtc_time);
+
+    return rtc_time.min;
+}
+
+rtc_time_t TimeManager::getWakeupTime(void)
+{
+    rtc_time_t rtc_time;
+    rtc_time.hour = wakeup_hour;
+    rtc_time.min = wakeup_min;
+    return rtc_time;
 }

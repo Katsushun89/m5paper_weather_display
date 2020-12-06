@@ -7,6 +7,7 @@
 #include "src/time_manager.hpp"
 
 LGFX gfx;
+LGFX_Sprite time_sp(&gfx);
 LGFX_Sprite sense_temp_sp(&gfx);
 LGFX_Sprite sense_humi_sp(&gfx);
 LGFX_Sprite rfc_sp(&gfx);
@@ -65,6 +66,10 @@ void setup(void)
   gfx.setTextColor(TFT_BLACK, TFT_WHITE);
   gfx.setTextSize(0.85);
 
+  time_sp.setColorDepth(4);
+  time_sp.createSprite(300, 35);
+  time_sp.setFont(&fonts::lgfxJapanGothic_28);
+
   sense_temp_sp.setColorDepth(4);
   sense_temp_sp.createSprite(120, 80);
   sense_temp_sp.setFont(&fonts::Font8);
@@ -90,7 +95,9 @@ void setup(void)
   wifi_connection.setupWiFi();
 
   time_manager.syncTime();
+  time_manager.setWakeupTime(time_manager.getHour(), time_manager.getMin()+2);
   drawDate(time_manager.getDate().c_str());
+  drawTime(time_manager.getHour(), time_manager.getMin());
 
   if(weather_forecast.downloadWeatherForecast()){
     drawWeather();
@@ -109,10 +116,22 @@ void drawWeather(void)
   gfx.display();
 }
 
+void drawTime(int8_t hour, int8_t min)
+{
+  time_sp.clear(TFT_WHITE);
+  time_sp.setTextColor(TFT_BLACK);
+  time_sp.setTextSize(1.0);
+
+  char c_time[100] = {0};
+  snprintf(c_time, sizeof(c_time), "Last Updated %02d:%02d", hour, min);
+  time_sp.drawString(c_time, 0, 0);
+  time_sp.pushSprite(470, 10);
+}
+
 void drawThermometerIcon(void)
 {
   gfx.startWrite();
-  gfx.drawJpgFile(SD, "/thermometer.jpg", 470, 35); 
+  gfx.drawJpgFile(SD, "/thermometer.jpg", 470, 50); 
   gfx.endWrite();
   gfx.display();
 }
@@ -120,7 +139,7 @@ void drawThermometerIcon(void)
 void drawHumidityIcon(void)
 {
   gfx.startWrite();
-  gfx.drawJpgFile(SD, "/humidity.jpg", 710, 35); 
+  gfx.drawJpgFile(SD, "/humidity.jpg", 710, 50); 
   gfx.endWrite();
   gfx.display();
 }
@@ -134,12 +153,12 @@ void drawSenseTempAndHumid(void)
   sense_temp_sp.clear(TFT_WHITE);
   sense_temp_sp.setTextColor(TFT_BLACK);
   sense_temp_sp.drawNumber((int)temp, 0, 0);
-  sense_temp_sp.pushSprite(570, 40);
+  sense_temp_sp.pushSprite(570, 55);
 
   sense_humi_sp.clear(TFT_WHITE);
   sense_humi_sp.setTextColor(TFT_BLACK);
   sense_humi_sp.drawNumber((int)humi, 0, 0);
-  sense_humi_sp.pushSprite(570+250, 40);
+  sense_humi_sp.pushSprite(570+250, 55);
 }
 
 void drawRainFallChance(void)
@@ -158,11 +177,11 @@ void drawRainFallChance(void)
   rfc_sp.drawString("12-18", 120*2, 0);
   rfc_sp.drawString("18-24", 120*3, 0);
   rfc_sp.setTextSize(1.3);
-  rfc_sp.drawString(rfc00_06.c_str(), 120*0, 50);
-  rfc_sp.drawString(rfc06_12.c_str(), 120*1, 50);
-  rfc_sp.drawString(rfc12_18.c_str(), 120*2, 50);
-  rfc_sp.drawString(rfc18_24.c_str(), 120*3, 50);
-  rfc_sp.pushSprite(470, 160);
+  rfc_sp.drawString(rfc00_06.c_str(), 120*0, 46);
+  rfc_sp.drawString(rfc06_12.c_str(), 120*1, 46);
+  rfc_sp.drawString(rfc12_18.c_str(), 120*2, 46);
+  rfc_sp.drawString(rfc18_24.c_str(), 120*3, 46);
+  rfc_sp.pushSprite(470, 180);
 }
 
 void drawTemperature(void)
@@ -179,13 +198,13 @@ void drawTemperature(void)
   temp_sp.setTextSize(1.4);
   temp_sp.drawString(max_temp.c_str(), 0, 25);
   temp_sp.drawString(min_temp.c_str(), 240, 25);
-  temp_sp.pushSprite(470, 275);
+  temp_sp.pushSprite(470, 300);
 }
 
 void loop(void)
 {
   if(M5.BtnP.wasPressed()){
-    M5.shutdown(5);
+    M5.shutdown(time_manager.getWakeupTime());
   }
 
   M5.update();
