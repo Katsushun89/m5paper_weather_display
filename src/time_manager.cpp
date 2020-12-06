@@ -1,8 +1,8 @@
 #include <M5EPD.h>
 #include <WiFi.h>
-#include "time_sync.hpp"
+#include "time_manager.hpp"
 
-void TimeSync::syncTime()
+void TimeManager::syncTime()
 {
     if(!WiFi.isConnected()){
         Serial.println("Unable to NTP because the WiFi is not connected");
@@ -32,7 +32,7 @@ void TimeSync::syncTime()
     delay(1000);
 }
 
-String TimeSync::getDate(void)
+String TimeManager::getDate(void)
 {
     rtc_date_t rtc_date;
     M5.RTC.getDate(&rtc_date);

@@ -1,10 +1,10 @@
 #pragma once
 
-class TimeSync
+class TimeManager
 {
 public:
-    TimeSync(){};
-    ~TimeSync() = default;
+    TimeManager(){};
+    ~TimeManager() = default;
     void syncTime();
     String getDate(void);
 };

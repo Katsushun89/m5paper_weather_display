@@ -4,7 +4,7 @@
 #include <map>
 #include "src/wifi_connection.hpp"
 #include "src/weather_forecast.hpp"
-#include "src/time_sync.hpp"
+#include "src/time_manager.hpp"
 
 LGFX gfx;
 LGFX_Sprite sense_temp_sp(&gfx);
@@ -14,7 +14,7 @@ LGFX_Sprite temp_sp(&gfx);
 
 WiFiConnection wifi_connection;
 WeatherForecast weather_forecast;
-TimeSync time_sync;
+TimeManager time_manager;
 
 int w;
 int h;
@@ -89,8 +89,8 @@ void setup(void)
 
   wifi_connection.setupWiFi();
 
-  time_sync.syncTime();
-  drawDate(time_sync.getDate().c_str());
+  time_manager.syncTime();
+  drawDate(time_manager.getDate().c_str());
 
   if(weather_forecast.downloadWeatherForecast()){
     drawWeather();
