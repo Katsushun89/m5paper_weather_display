@@ -4,6 +4,7 @@
 #include <map>
 #include "src/wifi_connection.hpp"
 #include "src/weather_forecast.hpp"
+#include "src/time_sync.hpp"
 
 LGFX gfx;
 LGFX_Sprite sense_temp_sp(&gfx);
@@ -13,6 +14,7 @@ LGFX_Sprite temp_sp(&gfx);
 
 WiFiConnection wifi_connection;
 WeatherForecast weather_forecast;
+TimeSync time_sync;
 
 int w;
 int h;
@@ -87,7 +89,8 @@ void setup(void)
 
   wifi_connection.setupWiFi();
 
-  drawDate("12.05 12:34");
+  time_sync.syncTime();
+  drawDate(time_sync.getDate().c_str());
 
   if(weather_forecast.downloadWeatherForecast()){
     drawWeather();
@@ -170,8 +173,6 @@ void drawTemperature(void)
   String max_temp = weather_forecast.getMaxTemperature() + "℃";
   String min_temp = weather_forecast.getMinTemperature() + "℃";
 
-  //String max_temp = "23℃";
-  //String min_temp = "9℃";
   temp_sp.setTextSize(0.65);
   temp_sp.drawString("最高", 0, 0);
   temp_sp.drawString("最低", 240, 0);
