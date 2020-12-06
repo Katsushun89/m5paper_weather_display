@@ -95,5 +95,6 @@ rtc_time_t TimeManager::getWakeupTime(void)
     rtc_time_t rtc_time;
     rtc_time.hour = wakeup_hour;
     rtc_time.min = wakeup_min;
+    Serial.printf("getWakeupTime %02d:%02d\n", rtc_time.hour, rtc_time.min);
     return rtc_time;
 }

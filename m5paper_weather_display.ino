@@ -12,6 +12,7 @@ LGFX_Sprite sense_temp_sp(&gfx);
 LGFX_Sprite sense_humi_sp(&gfx);
 LGFX_Sprite rfc_sp(&gfx);
 LGFX_Sprite temp_sp(&gfx);
+LGFX_Sprite batt_sp(&gfx);
 
 WiFiConnection wifi_connection;
 WeatherForecast weather_forecast;
@@ -70,6 +71,10 @@ void setup(void)
   time_sp.createSprite(300, 35);
   time_sp.setFont(&fonts::lgfxJapanGothic_28);
 
+  batt_sp.setColorDepth(4);
+  batt_sp.createSprite(200, 35);
+  batt_sp.setFont(&fonts::lgfxJapanGothic_28);
+
   sense_temp_sp.setColorDepth(4);
   sense_temp_sp.createSprite(120, 80);
   sense_temp_sp.setFont(&fonts::Font8);
@@ -94,17 +99,21 @@ void setup(void)
 
   wifi_connection.setupWiFi();
 
+  drawBatteryRemain();
+
   time_manager.syncTime();
-  time_manager.setWakeupTime(time_manager.getHour(), time_manager.getMin()+2);
+  //time_manager.setWakeupTime(time_manager.getHour(), time_manager.getMin()+2);
+  time_manager.setWakeupTime(6, 30); //06:30
   drawDate(time_manager.getDate().c_str());
   drawTime(time_manager.getHour(), time_manager.getMin());
-
   if(weather_forecast.downloadWeatherForecast()){
     drawWeather();
     drawRainFallChance();
     drawTemperature();
   }
   wifi_connection.downWiFi();
+
+  M5.shutdown(15300);//Updated every 4.25h
 }
 
 void drawWeather(void)
@@ -126,6 +135,30 @@ void drawTime(int8_t hour, int8_t min)
   snprintf(c_time, sizeof(c_time), "Last Updated %02d:%02d", hour, min);
   time_sp.drawString(c_time, 0, 0);
   time_sp.pushSprite(470, 10);
+}
+
+int8_t batteryRemain(void)
+{
+  const int16_t max_voltage = 4200;
+  const int16_t min_voltage = 3400;
+
+  int16_t battery_remain = (int16_t)(((float)M5.getBatteryVoltage() - min_voltage) / (float)(max_voltage - min_voltage) * 100.);
+  if(battery_remain > 100) battery_remain = 100;
+  if(battery_remain < 0) battery_remain = 0;
+  Serial.printf("battery_remain %d\n", battery_remain);
+  return battery_remain;
+}
+
+void drawBatteryRemain(void)
+{
+  batt_sp.clear(TFT_WHITE);
+  batt_sp.setTextColor(TFT_BLACK);
+  batt_sp.setTextSize(1.0);
+
+  char c_batt[100] = {0};
+  snprintf(c_batt, sizeof(c_batt), "%d%% ", batteryRemain());
+  batt_sp.drawString(c_batt, 0, 0);
+  batt_sp.pushSprite(470+400, 10);
 }
 
 void drawThermometerIcon(void)
@@ -204,6 +237,7 @@ void drawTemperature(void)
 void loop(void)
 {
   if(M5.BtnP.wasPressed()){
+    Serial.println("shutdown");
     M5.shutdown(time_manager.getWakeupTime());
   }
 
