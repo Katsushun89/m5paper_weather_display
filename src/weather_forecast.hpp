@@ -43,4 +43,5 @@ public:
     String getRainFallChance06_12(void){ return rain_fall_chance_06_12; };
     String getRainFallChance12_18(void){ return rain_fall_chance_12_18; };
     String getRainFallChance18_24(void){ return rain_fall_chance_18_24; };
+    bool willBeRainy(void);
 };

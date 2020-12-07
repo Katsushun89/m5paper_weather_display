@@ -102,3 +102,12 @@ int WeatherForecast::getWeatherEnum(void)
     }
     return WEATHER_NOT_SET;
 }
+
+bool WeatherForecast::willBeRainy(void)
+{
+    if(weather.indexOf("雨") != -1){
+        return true;
+    }
+    return false;
+}
+ 

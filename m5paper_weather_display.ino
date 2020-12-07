@@ -13,6 +13,7 @@ LGFX_Sprite sense_humi_sp(&gfx);
 LGFX_Sprite rfc_sp(&gfx);
 LGFX_Sprite temp_sp(&gfx);
 LGFX_Sprite batt_sp(&gfx);
+LGFX_Sprite notice_sp(&gfx);
 
 WiFiConnection wifi_connection;
 WeatherForecast weather_forecast;
@@ -91,6 +92,10 @@ void setup(void)
   temp_sp.createSprite(530, 100);
   temp_sp.setFont(&fonts::lgfxJapanGothic_40);
 
+  notice_sp.setColorDepth(4);
+  notice_sp.createSprite(530, 100);
+  notice_sp.setFont(&fonts::lgfxJapanGothic_40);
+
   delay(1000);
 
   drawThermometerIcon();
@@ -110,10 +115,11 @@ void setup(void)
     drawWeather();
     drawRainFallChance();
     drawTemperature();
+    drawNotice();
   }
   wifi_connection.downWiFi();
 
-  M5.shutdown(15300);//Updated every 4.25h
+  //M5.shutdown(15300);//Updated every 4.25h
 }
 
 void drawWeather(void)
@@ -139,7 +145,7 @@ void drawTime(int8_t hour, int8_t min)
 
 int8_t batteryRemain(void)
 {
-  const int16_t max_voltage = 4200;
+  const int16_t max_voltage = 4100;
   const int16_t min_voltage = 3400;
 
   int16_t battery_remain = (int16_t)(((float)M5.getBatteryVoltage() - min_voltage) / (float)(max_voltage - min_voltage) * 100.);
@@ -156,9 +162,10 @@ void drawBatteryRemain(void)
   batt_sp.setTextSize(1.0);
 
   char c_batt[100] = {0};
-  snprintf(c_batt, sizeof(c_batt), "%d%% ", batteryRemain());
+  snprintf(c_batt, sizeof(c_batt), "%d %d%%", M5.getBatteryVoltage(), batteryRemain());
   batt_sp.drawString(c_batt, 0, 0);
-  batt_sp.pushSprite(470+400, 10);
+  //batt_sp.pushSprite(470+400, 10);
+  batt_sp.pushSprite(470+300, 10);
 }
 
 void drawThermometerIcon(void)
@@ -233,6 +240,22 @@ void drawTemperature(void)
   temp_sp.drawString(min_temp.c_str(), 240, 25);
   temp_sp.pushSprite(470, 300);
 }
+
+void drawNotice(void)
+{
+  notice_sp.clear(TFT_WHITE);
+  notice_sp.setTextColor(TFT_BLACK);
+  String notice;
+  if(weather_forecast.willBeRainy()){
+    notice = "傘を忘れずに!!";
+  }else{
+    notice = "             ";
+  }
+  notice_sp.setTextSize(1);
+  notice_sp.drawString(notice.c_str(), 0, 0);
+  notice_sp.pushSprite(470, 400);
+}
+
 
 void loop(void)
 {
