@@ -13,7 +13,6 @@ LGFX_Sprite sense_humi_sp(&gfx);
 LGFX_Sprite rfc_sp(&gfx);
 LGFX_Sprite temp_sp(&gfx);
 LGFX_Sprite batt_sp(&gfx);
-LGFX_Sprite notice_sp(&gfx);
 
 WiFiConnection wifi_connection;
 WeatherForecast weather_forecast;
@@ -92,20 +91,15 @@ void setup(void)
   temp_sp.createSprite(530, 100);
   temp_sp.setFont(&fonts::lgfxJapanGothic_40);
 
-  notice_sp.setColorDepth(4);
-  notice_sp.createSprite(530, 100);
-  notice_sp.setFont(&fonts::lgfxJapanGothic_40);
-
   delay(1000);
 
   drawThermometerIcon();
   drawHumidityIcon();
   drawSenseTempAndHumid();
 
-  wifi_connection.setupWiFi();
-
   drawBatteryRemain();
 
+  wifi_connection.setupWiFi();
   time_manager.syncTime();
   //time_manager.setWakeupTime(time_manager.getHour(), time_manager.getMin()+2);
   time_manager.setWakeupTime(6, 30); //06:30
@@ -119,7 +113,7 @@ void setup(void)
   }
   wifi_connection.downWiFi();
 
-  //M5.shutdown(15300);//Updated every 4.25h
+  M5.shutdown(15300);//Updated every 4.25h
 }
 
 void drawWeather(void)
@@ -243,26 +237,15 @@ void drawTemperature(void)
 
 void drawNotice(void)
 {
-  notice_sp.clear(TFT_WHITE);
-  notice_sp.setTextColor(TFT_BLACK);
-  String notice;
   if(weather_forecast.willBeRainy()){
-    notice = "傘を忘れずに!!";
-  }else{
-    notice = "             ";
+    gfx.startWrite();
+    gfx.drawJpgFile(SD, "/notice.jpg", 470, 400); 
+    gfx.endWrite();
+    gfx.display();
   }
-  notice_sp.setTextSize(1);
-  notice_sp.drawString(notice.c_str(), 0, 0);
-  notice_sp.pushSprite(470, 400);
 }
-
 
 void loop(void)
 {
-  if(M5.BtnP.wasPressed()){
-    Serial.println("shutdown");
-    M5.shutdown(time_manager.getWakeupTime());
-  }
-
   M5.update();
 }
