@@ -47,7 +47,7 @@ void setup(void)
   setupWeatherIcon();
 
   //M5.begin();
-  M5.begin(true, true, true, true, false, false);//custmized
+  M5.begin(true, true, true, true, false, false);//customized
 
   M5.SHT30.Begin();
   M5.RTC.begin();
@@ -111,9 +111,11 @@ void setup(void)
     drawTemperature();
     drawNotice();
   }
+  delay(1000);
   wifi_connection.downWiFi();
 
-  M5.shutdown(15300);//Updated every 4.25h
+  //M5.shutdown(15300);//Updated every 4.25h
+  M5.shutdown(60);//Updated every 4.25h
 }
 
 void drawWeather(void)
@@ -122,7 +124,7 @@ void drawWeather(void)
   gfx.startWrite();
   gfx.drawJpgFile(SD, weather_icon_file_map[weather_enum].c_str(), 40, 100); 
   gfx.endWrite();
-  gfx.display();
+  gfx.waitDisplay();
 }
 
 void drawTime(int8_t hour, int8_t min)
@@ -167,7 +169,7 @@ void drawThermometerIcon(void)
   gfx.startWrite();
   gfx.drawJpgFile(SD, "/thermometer.jpg", 470, 50); 
   gfx.endWrite();
-  gfx.display();
+  gfx.waitDisplay();
 }
 
 void drawHumidityIcon(void)
@@ -175,7 +177,7 @@ void drawHumidityIcon(void)
   gfx.startWrite();
   gfx.drawJpgFile(SD, "/humidity.jpg", 710, 50); 
   gfx.endWrite();
-  gfx.display();
+  gfx.waitDisplay();
 }
 
 void drawSenseTempAndHumid(void)
@@ -241,7 +243,7 @@ void drawNotice(void)
     gfx.startWrite();
     gfx.drawJpgFile(SD, "/notice.jpg", 470, 400); 
     gfx.endWrite();
-    gfx.display();
+    gfx.waitDisplay();
   }
 }
 
