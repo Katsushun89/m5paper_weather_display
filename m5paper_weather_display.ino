@@ -114,8 +114,8 @@ void setup(void)
   delay(1000);
   wifi_connection.downWiFi();
 
-  //M5.shutdown(15300);//Updated every 4.25h
-  M5.shutdown(60);//Updated every 4.25h
+  M5.shutdown(15300);//Updated every 4.25h
+  //M5.shutdown(60);//Updated every 4.25h
 }
 
 void drawWeather(void)
