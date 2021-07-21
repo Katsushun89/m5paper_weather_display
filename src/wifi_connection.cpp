@@ -4,6 +4,8 @@
 
 bool WiFiConnection::setupWiFi(void)
 {
+    Serial.printf("connecting: %s, %s\r\n", SSID, PASS);
+
     WiFi.begin(SSID, PASS);
 
     // Wait some time to connect to wifi

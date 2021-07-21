@@ -38,6 +38,7 @@ bool WeatherForecast::downloadWeatherForecast(void)
 {
     Serial.println("downloadWeatherForecast");//debug
     if(!WiFi.isConnected()){
+        Serial.println("WiFi error");//debug
         this->is_downloaded_weather = false;
         return false;
     }
@@ -45,6 +46,7 @@ bool WeatherForecast::downloadWeatherForecast(void)
     DynamicJsonDocument weather_info(20000);
 
     if(!getWeatherForecast(weather_info)){
+        Serial.println("getWeatherForecast error");//debug
         this->is_downloaded_weather = false;
         return false;
     }

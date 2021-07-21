@@ -47,7 +47,8 @@ void setup(void)
   setupWeatherIcon();
 
   //M5.begin();
-  M5.begin(true, true, true, true, false, false);//customized
+  //M5.begin(true, true, true, true, false, false);//custmized
+  M5.begin(true, true, true, true, false);
 
   M5.SHT30.Begin();
   M5.RTC.begin();
@@ -98,6 +99,7 @@ void setup(void)
   drawSenseTempAndHumid();
 
   drawBatteryRemain();
+  Serial.printf("Start Application\r\n");
 
   wifi_connection.setupWiFi();
   time_manager.syncTime();
